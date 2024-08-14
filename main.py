@@ -5,7 +5,7 @@ def main():
     """
     Main function to interact with the user and manage passwords.
     """
-    print("Welcome to SecureSnooze!")
+    print("Welcome to LockBoxXtreme!")
     choice = input("Choose an option: (1) Store Password (2) Retrieve Password: ")
 
     if choice == "1":

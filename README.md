@@ -1,6 +1,6 @@
-# SecureSnooze
+# LockBoxXtreme
 
-**SecureSnooze** is a simple and secure password manager designed to safely store and manage your passwords. This tool leverages encryption techniques to protect sensitive information, ensuring that your passwords are kept safe from unauthorized access.
+**LockBoxXtreme** is a simple and secure password manager designed to safely store and manage your passwords. This tool leverages encryption techniques to protect sensitive information, ensuring that your passwords are kept safe from unauthorized access.
 
 ## Features
 
@@ -11,7 +11,7 @@
 
 ## Installation
 
-To use **SecureSnooze**, follow these steps:
+To use **LockBoxXtreme**, follow these steps:
 
 ### Prerequisites
 
@@ -23,7 +23,7 @@ Clone this repository to your local machine using Git:
 
 ```bash
 git clone https://github.com/gandhibhai/LockBoxXtreme.git
-cd SecureSnooze
+cd LockBoxXtreme
 ```
 
 ### Install Dependencies
@@ -37,7 +37,7 @@ pip install -r requirements.txt
 #### Usage
 
 Generating a Key
-Before you start using SecureSnooze, you need to generate a secret key:
+Before you start using LockBoxXtreme, you need to generate a secret key:
 
 ```python
 from encryptor import generate_key
@@ -88,7 +88,7 @@ else:
 ### Directory Structure
 
 ```bash
-SecureSnooze/
+LockBoxXtreme/
 │
 ├── encryptor.py         # Encryption and decryption functions
 ├── storage.py           # Password storage management
@@ -99,7 +99,7 @@ SecureSnooze/
 ```
 
 ### Contributing
-We welcome contributions to SecureSnooze! If you have suggestions, bug reports, or improvements, please submit an issue or pull request on our [GitHub repository](https://github.com/gandhibhai/LockBoxXtreme).
+We welcome contributions to LockBoxXtreme! If you have suggestions, bug reports, or improvements, please submit an issue or pull request on our [GitHub repository](https://github.com/gandhibhai/LockBoxXtreme).
 
 ### License
 This project is licensed under the MIT License. See the LICENSE file for details.

@@ -1,4 +1,4 @@
-dfdffrom cryptography.fernet import Fernet
+from cryptography.fernet import Fernet
 
 def generate_key():
     """

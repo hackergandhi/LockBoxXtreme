@@ -118,7 +118,7 @@ if encrypted_password:
 ```
 
 ### Contributing
-We welcome contributions to LockBoxXtreme! If you have suggestions, bug reports, or improvements, please submit an issue or pull request on our [GitHub](https://github.com/gandhibhai/LockBoxXtreme) repository.
+We welcome contributions to LockBoxXtreme! If you have suggestions, bug reports, or improvements, please submit an issue or pull request on our [GitHub](https://github.com/gandhibhai/LockBoxXtreme/pulls) repository.
 
 ### License
 This project is licensed under the MIT License. See the [LICENSE](https://github.com/gandhibhai/LockBoxXtreme/blob/main/LICENSE) file for details.

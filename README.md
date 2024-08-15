@@ -37,12 +37,11 @@ pip install -r requirements.txt
 
 #### Usage
 
-Generating a Key
-Before you start using LockBoxXtreme, you need to generate a secret key:
-
 ```bash
 python3 main.py
 ```
+Generating a Key
+Before you start using LockBoxXtreme, you need to generate a secret key:
 
 ```python
 from encryptor import generate_key

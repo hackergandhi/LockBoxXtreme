@@ -2,6 +2,7 @@ import sys
 sys.dont_write_bytecode = True
 
 import json
+from colorama import Fore
 
 def save_passwords(passwords: dict):
     """
@@ -18,8 +19,9 @@ def load_passwords() -> dict:
         with open('passwords.json', 'r') as f:
             return json.load(f)
     except FileNotFoundError:
+        print(f"{Fore.RED}🚨 Error: passwords.json file not found! Starting fresh.")
         return {}
     except json.JSONDecodeError:
         # Handle case where the JSON file is corrupted or empty
-        print("Error: Corrupted or empty passwords file.")
+        print(f"{Fore.RED}🚨 Error: Corrupted or empty passwords file.")
         return {}

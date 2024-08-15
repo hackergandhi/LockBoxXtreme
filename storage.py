@@ -16,3 +16,7 @@ def load_passwords() -> dict:
             return json.load(f)
     except FileNotFoundError:
         return {}
+    except json.JSONDecodeError:
+        # Handle case where the JSON file is corrupted or empty
+        print("Error: Corrupted or empty passwords file.")
+        return {}

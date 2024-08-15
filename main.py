@@ -1,3 +1,6 @@
+import sys
+sys.dont_write_bytecode = True
+
 from encryptor import generate_key, load_key, encrypt_message, decrypt_message
 from storage import save_passwords, load_passwords
 

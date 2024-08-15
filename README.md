@@ -41,13 +41,7 @@ pip install -r requirements.txt
 
 ### Run the Application
 
-Provide executable permission:
-
-```bash
-chmod +x main.py
-```
-
-Start the application:
+- Start the application:
 
 ```bash
 python3 main.py

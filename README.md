@@ -24,6 +24,7 @@ Clone this repository to your local machine using Git:
 ```bash
 git clone https://github.com/gandhibhai/LockBoxXtreme.git
 cd LockBoxXtreme
+chmod +x main.py
 ```
 
 ### Install Dependencies
@@ -38,6 +39,10 @@ pip install -r requirements.txt
 
 Generating a Key
 Before you start using LockBoxXtreme, you need to generate a secret key:
+
+```bash
+python3 main.py
+```
 
 ```python
 from encryptor import generate_key

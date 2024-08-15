@@ -13,4 +13,4 @@ Python
 
 ## Reporting a Vulnerability
 
-If you have bug reports, or improvements, please submit an issue or pull request on our GitHub repository.
+If you have bug reports, or improvements, please submit an issue or pull request on our [GitHub](https://github.com/gandhibhai/LockBoxXtreme/issues/new) repository.

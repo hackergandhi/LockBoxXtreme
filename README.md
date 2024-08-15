@@ -40,54 +40,6 @@ pip install -r requirements.txt
 ```bash
 python3 main.py
 ```
-Generating a Key
-Before you start using LockBoxXtreme, you need to generate a secret key:
-
-```python
-from encryptor import generate_key
-
-key = generate_key()
-with open("secret.key", "wb") as key_file:
-    key_file.write(key)
-```
-
-### Storing a Password
-To store a password, use the following script:
-
-```python
-from encryptor import load_key, encrypt_message
-from storage import save_passwords
-
-key = load_key()
-password = encrypt_message("your-password", key)
-
-# Store encrypted password in a dictionary
-passwords = {
-    "example_service": password
-}
-
-# Save passwords to a file
-save_passwords(passwords)
-```
-
-### Retrieving a Password
-To retrieve a password, use the following script:
-
-```python
-from encryptor import load_key, decrypt_message
-from storage import load_passwords
-
-key = load_key()
-passwords = load_passwords()
-
-# Decrypt the password
-encrypted_password = passwords.get("example_service")
-if encrypted_password:
-    decrypted_password = decrypt_message(encrypted_password, key)
-    print(f"Decrypted password: {decrypted_password}")
-else:
-    print("Password not found!")
-```
 
 ### Directory Structure
 

@@ -28,3 +28,4 @@ def decrypt_message(encrypted_message: bytes, key: bytes) -> str:
     """
     f = Fernet(key)
     return f.decrypt(encrypted_message).decode()
+

@@ -1,3 +1,6 @@
+import sys
+sys.dont_write_bytecode = True
+
 from cryptography.fernet import Fernet
 
 def generate_key():

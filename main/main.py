@@ -59,7 +59,7 @@ def main():
 
             if not validate_password(password):
                 print(f"{Fore.RED}❌ Password did not meet the requirements. Please try again.")
-                time.sleep(2)
+                time.sleep(1)
                 continue
 
             encrypted_password = encrypt_message(password, key)
@@ -83,7 +83,7 @@ def main():
                 print(f"{Fore.GREEN}🎉 Password for {service}: {Fore.YELLOW}{decrypted_password}")
             else:
                 print(f"{Fore.RED}🚨 No password found for the given service! Try again, buddy.")
-            time.sleep(2)
+            time.sleep(1)
 
         elif choice == "3":
             clear_screen()
@@ -96,14 +96,14 @@ def main():
             else:
                 print(f"{Fore.RED}🚨 No services saved yet.")
             print()  # Adding space for better readability
-            time.sleep(3)
+            time.sleep(1)
 
         elif choice == "4":
             clear_screen()
             print_banner()
             service = input(f"{Fore.CYAN}🗑️ Enter the service name you wanna delete: {Fore.YELLOW}")
             delete_service(service)
-            time.sleep(2)
+            time.sleep(1)
 
         elif choice == "5":
             clear_screen()
@@ -114,7 +114,7 @@ def main():
             clear_screen()
             print_banner()
             print(f"{Fore.RED}❌ Invalid option selected. Are you even trying?")
-            time.sleep(2)
+            time.sleep(1)
 
 if __name__ == "__main__":
     main()

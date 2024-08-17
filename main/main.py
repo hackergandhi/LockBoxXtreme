@@ -1,6 +1,6 @@
 import sys
-sys.dont_write_bytecode = True
-
+import os
+import time
 import colorama
 from colorama import Fore, Style
 from encryptor import generate_key, load_key, encrypt_message, decrypt_message, validate_password
@@ -8,15 +8,21 @@ from storage import save_passwords, load_passwords, delete_service
 
 colorama.init(autoreset=True)
 
+def clear_screen():
+    """
+    Clears the terminal screen based on the operating system.
+    """
+    os.system('cls' if os.name == 'nt' else 'clear')
+
 def print_banner():
     banner = f"""
-{Fore.CYAN}************************************************************
-*                                                          *
-*          {Fore.RED}Welcome to the LockBoxXtreme!{Fore.CYAN}          *
-*                                                          *
-*         {Fore.GREEN}Your password guardian and cringy buddy!{Fore.CYAN}       *
-*                                                          *
-************************************************************
+{Fore.CYAN}┌─────────────────────────────────────────────────────┐
+│                                                     │
+│        {Fore.RED}Welcome to the LockBoxXtreme!{Fore.CYAN}         │
+│                                                     │
+│      {Fore.GREEN}Your password guardian and cringy buddy!{Fore.CYAN}   │
+│                                                     │
+└─────────────────────────────────────────────────────┘
 """
     print(banner)
 
@@ -24,9 +30,10 @@ def main():
     """
     Main function to interact with the user and manage passwords.
     """
-    print_banner()
-    
     while True:
+        clear_screen()
+        print_banner()
+        
         print(f"{Fore.MAGENTA}💾 Choose an option:")
         print(f"{Fore.YELLOW}1) Store Password {Fore.MAGENTA}(Keep it safe, bro!)")
         print(f"{Fore.YELLOW}2) Retrieve Password {Fore.MAGENTA}(Don't worry, I got you!)")
@@ -45,11 +52,14 @@ def main():
                 key_file.write(key)
 
         if choice == "1":
+            clear_screen()
+            print_banner()
             service = input(f"{Fore.CYAN}🔐 Enter the service name you wanna protect: {Fore.YELLOW}")
             password = input(f"{Fore.CYAN}🔑 Enter the password you wanna save: {Fore.YELLOW}")
 
             if not validate_password(password):
                 print(f"{Fore.RED}❌ Password did not meet the requirements. Please try again.")
+                time.sleep(2)
                 continue
 
             encrypted_password = encrypt_message(password, key)
@@ -58,8 +68,11 @@ def main():
             passwords[service] = encrypted_password.decode()  # Store as a string in JSON
             save_passwords(passwords)
             print(f"{Fore.GREEN}✅ Password for {service} has been locked away safely! 🔒")
+            time.sleep(2)
 
         elif choice == "2":
+            clear_screen()
+            print_banner()
             service = input(f"{Fore.CYAN}🔍 Enter the service name you wanna retrieve: {Fore.YELLOW}")
 
             passwords = load_passwords()
@@ -70,8 +83,11 @@ def main():
                 print(f"{Fore.GREEN}🎉 Password for {service}: {Fore.YELLOW}{decrypted_password}")
             else:
                 print(f"{Fore.RED}🚨 No password found for the given service! Try again, buddy.")
+            time.sleep(2)
 
         elif choice == "3":
+            clear_screen()
+            print_banner()
             passwords = load_passwords()
             if passwords:
                 print(f"{Fore.CYAN}🔍 Saved services:")
@@ -79,17 +95,26 @@ def main():
                     print(f"{Fore.YELLOW} - {service}")
             else:
                 print(f"{Fore.RED}🚨 No services saved yet.")
+            print()  # Adding space for better readability
+            time.sleep(3)
 
         elif choice == "4":
+            clear_screen()
+            print_banner()
             service = input(f"{Fore.CYAN}🗑️ Enter the service name you wanna delete: {Fore.YELLOW}")
             delete_service(service)
+            time.sleep(2)
 
         elif choice == "5":
+            clear_screen()
             print(f"{Fore.GREEN}👋 Exiting. Stay safe!")
             break
 
         else:
+            clear_screen()
+            print_banner()
             print(f"{Fore.RED}❌ Invalid option selected. Are you even trying?")
+            time.sleep(2)
 
 if __name__ == "__main__":
     main()

@@ -25,3 +25,15 @@ def load_passwords() -> dict:
         # Handle case where the JSON file is corrupted or empty
         print(f"{Fore.RED}🚨 Error: Corrupted or empty passwords file.")
         return {}
+
+def delete_service(service: str):
+    """
+    Deletes a specific service from the passwords file.
+    """
+    passwords = load_passwords()
+    if service in passwords:
+        del passwords[service]
+        save_passwords(passwords)
+        print(f"{Fore.GREEN}✅ {service} has been removed successfully.")
+    else:
+        print(f"{Fore.RED}🚨 No such service found.")

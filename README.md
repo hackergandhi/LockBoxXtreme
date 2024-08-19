@@ -51,28 +51,6 @@ python3 main.py
 
 **Storing a Password**
 
-- Run the application:
-
-```bash
-python3 main.py
-```
-- Choose the option to store a password:
-
-```text
-💾 Choose an option:
-1) Store Password (Lock it up securely!)
-2) Retrieve Password (Unlock it with ease!)
-
-👉 Enter your choice: 1
-```
-
-- Provide the service name and password when prompted:
-
-```text
-🔐 Enter the service name you want to protect: Gmail
-🔑 Enter the password you want to save: mySuperSecretPassword123
-```
-
 - The password will be encrypted and stored.
   
   (Encryption):
@@ -84,28 +62,6 @@ save_passwords(passwords)
 ```
 
 ### Retrieving a Password
-
-- Run the application:
-
-```bash
-python3 main.py
-```
-
-- Choose the option to retrieve a password:
-
-```text
-💾 Choose an option:
-1) Store Password (Lock it up securely!)
-2) Retrieve Password (Unlock it with ease!)
-
-👉 Enter your choice: 2
-```
-
-- Enter the service name to retrieve the password:
-
-```text
-🔍 Enter the service name you want to retrieve: Gmail
-```
 
 - If the service exists, the decrypted password will be displayed.
 

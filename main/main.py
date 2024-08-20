@@ -7,8 +7,17 @@ from encryptor import generate_key, load_key, encrypt_message, decrypt_message, 
 from storage import save_passwords, load_passwords, delete_service
 from getpass import getpass
 import json
+import shutil
 
 sys.dont_write_bytecode = True
+
+# Prevent the creation of __pycache__
+def remove_pycache():
+    if os.path.exists('__pycache__'):
+        shutil.rmtree('__pycache__')
+
+remove_pycache()
+
 colorama.init(autoreset=True)
 
 def clear_screen():
@@ -29,10 +38,34 @@ def print_banner():
 """
     print(banner)
 
+def print_help():
+    help_text = f"""
+{Fore.CYAN}LockBoxXtreme - Password Management Tool
+
+Usage: python main.py [options]
+
+Options:
+-h, --help                Show this help message and exit
+1) Store Password         Store a new password securely.
+2) Retrieve Password      Retrieve a stored password.
+3) View All Services      View all services with stored passwords.
+4) Delete a Service       Delete a stored password for a specific service.
+5) Exit                   Exit the application.
+
+{Fore.YELLOW}Example:
+python main.py            Run the interactive menu.
+python main.py -h         Show help message.
+"""
+    print(help_text)
+
 def main():
     """
     Main function to interact with the user and manage passwords.
     """
+    if len(sys.argv) > 1 and sys.argv[1] in ['-h', '--help']:
+        print_help()
+        return
+
     salt = None
     key = None
 
@@ -128,3 +161,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    # Ensure __pycache__ is removed at the end of the script
+    remove_pycache()

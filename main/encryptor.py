@@ -1,20 +1,43 @@
 import sys
+import os
+import re
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.backends import default_backend
+import base64
+from getpass import getpass
+
 sys.dont_write_bytecode = True
 
-from cryptography.fernet import Fernet
-import re
+def generate_key(password: str) -> bytes:
+    """
+    Generates an encryption key based on a password using PBKDF2HMAC.
+    """
+    salt = os.urandom(16)
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=salt,
+        iterations=100000,
+        backend=default_backend()
+    )
+    key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
+    return key, salt
 
-def generate_key():
+def load_key(password: str, salt: bytes) -> bytes:
     """
-    Generates a new encryption key.
+    Loads the encryption key using the provided password and salt.
     """
-    return Fernet.generate_key()
-
-def load_key():
-    """
-    Loads the encryption key from a file.
-    """
-    return open("secret.key", "rb").read()
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=salt,
+        iterations=100000,
+        backend=default_backend()
+    )
+    key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
+    return key
 
 def encrypt_message(message: str, key: bytes) -> bytes:
     """
@@ -32,7 +55,7 @@ def decrypt_message(encrypted_message: bytes, key: bytes) -> str:
 
 def validate_password(password: str) -> bool:
     """
-    Validates the password to ensure it meets certain criteria.
+    Validates the password to ensure it meets enhanced security criteria.
     """
     if len(password) < 8:
         print("Password should be at least 8 characters long.")
@@ -48,5 +71,8 @@ def validate_password(password: str) -> bool:
         return False
     if not re.search("[!@#$%^&*(),.?\":{}|<>]", password):
         print("Password should contain at least one special character.")
+        return False
+    if re.search(r'(.)\1\1', password):
+        print("Password should not contain sequences of three or more repeating characters.")
         return False
     return True

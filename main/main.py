@@ -1,13 +1,14 @@
 import sys
-sys.dont_write_bytecode = True
-
 import os
 import time
 import colorama
 from colorama import Fore, Style
 from encryptor import generate_key, load_key, encrypt_message, decrypt_message, validate_password
 from storage import save_passwords, load_passwords, delete_service
+from getpass import getpass
+import json
 
+sys.dont_write_bytecode = True
 colorama.init(autoreset=True)
 
 def clear_screen():
@@ -32,6 +33,21 @@ def main():
     """
     Main function to interact with the user and manage passwords.
     """
+    salt = None
+    key = None
+
+    try:
+        with open("secret.salt", "rb") as salt_file:
+            salt = salt_file.read()
+    except FileNotFoundError:
+        print(f"{Fore.RED}🚨 Salt file not found. A new one will be created.")
+        salt = os.urandom(16)
+        with open("secret.salt", "wb") as salt_file:
+            salt_file.write(salt)
+
+    password = getpass(f"{Fore.CYAN}🔑 Enter your master password: {Fore.YELLOW}")
+    key = load_key(password, salt)
+
     while True:
         clear_screen()
         print_banner()
@@ -45,19 +61,11 @@ def main():
         
         choice = input(f"{Fore.GREEN}👉 {Fore.CYAN}Enter your choice: {Style.RESET_ALL}")
 
-        key = None
-        try:
-            key = load_key()
-        except FileNotFoundError:
-            key = generate_key()
-            with open("secret.key", "wb") as key_file:
-                key_file.write(key)
-
         if choice == "1":
             clear_screen()
             print_banner()
             service = input(f"{Fore.CYAN}🔐 Enter the service name you wanna protect: {Fore.YELLOW}")
-            password = input(f"{Fore.CYAN}🔑 Enter the password you wanna save: {Fore.YELLOW}")
+            password = getpass(f"{Fore.CYAN}🔑 Enter the password you wanna save: {Fore.YELLOW}")
 
             if not validate_password(password):
                 print(f"{Fore.RED}❌ Password did not meet the requirements. Please try again.")

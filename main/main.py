@@ -3,7 +3,7 @@ import os
 import time
 import colorama
 from colorama import Fore, Style
-from encryptor import generate_key, load_key, encrypt_message, decrypt_message, validate_password, generate_random_password
+from encryptor import generate_key, load_key, encrypt_message, decrypt_message, validate_password
 from storage import save_passwords, load_passwords, delete_service
 from getpass import getpass
 import json
@@ -11,6 +11,7 @@ import shutil
 
 sys.dont_write_bytecode = True
 
+# Prevent the creation of __pycache__
 def remove_pycache():
     if os.path.exists('__pycache__'):
         shutil.rmtree('__pycache__')
@@ -20,6 +21,9 @@ remove_pycache()
 colorama.init(autoreset=True)
 
 def clear_screen():
+    """
+    Clears the terminal screen based on the operating system.
+    """
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def print_banner():
@@ -46,8 +50,7 @@ Options:
 2) Retrieve Password      Retrieve a stored password.
 3) View All Services      View all services with stored passwords.
 4) Delete a Service       Delete a stored password for a specific service.
-5) Search for Service     Search for a service name in stored passwords.
-6) Exit                   Exit the application.
+5) Exit                   Exit the application.
 
 {Fore.YELLOW}Example:
 python main.py            Run the interactive menu.
@@ -56,6 +59,9 @@ python main.py -h         Show help message.
     print(help_text)
 
 def main():
+    """
+    Main function to interact with the user and manage passwords.
+    """
     if len(sys.argv) > 1 and sys.argv[1] in ['-h', '--help']:
         print_help()
         return
@@ -84,8 +90,7 @@ def main():
         print(f"{Fore.YELLOW}2) Retrieve Password {Fore.MAGENTA}(Don't worry, I got you!)")
         print(f"{Fore.YELLOW}3) View All Services {Fore.MAGENTA}(Check what you have stored!)")
         print(f"{Fore.YELLOW}4) Delete a Service {Fore.MAGENTA}(Remove a stored password!)")
-        print(f"{Fore.YELLOW}5) Search for Service {Fore.MAGENTA}(Find a saved service!)")
-        print(f"{Fore.YELLOW}6) Exit {Fore.MAGENTA}(Bye for now!)")
+        print(f"{Fore.YELLOW}5) Exit {Fore.MAGENTA}(Bye for now!)")
         
         choice = input(f"{Fore.GREEN}👉 {Fore.CYAN}Enter your choice: {Style.RESET_ALL}")
 
@@ -93,14 +98,7 @@ def main():
             clear_screen()
             print_banner()
             service = input(f"{Fore.CYAN}🔐 Enter the service name you wanna protect: {Fore.YELLOW}")
-            use_generated = input(f"{Fore.CYAN}🛠️ Do you want to generate a random password? (y/n): {Fore.YELLOW}").lower()
-            
-            if use_generated == 'y':
-                length = int(input(f"{Fore.CYAN}🔢 Enter desired password length: {Fore.YELLOW}"))
-                password = generate_random_password(length)
-                print(f"{Fore.GREEN}🛠️ Generated Password: {Fore.YELLOW}{password}")
-            else:
-                password = getpass(f"{Fore.CYAN}🔑 Enter the password you wanna save: {Fore.YELLOW}")
+            password = getpass(f"{Fore.CYAN}🔑 Enter the password you wanna save: {Fore.YELLOW}")
 
             if not validate_password(password):
                 print(f"{Fore.RED}❌ Password did not meet the requirements. Please try again.")
@@ -110,7 +108,7 @@ def main():
             encrypted_password = encrypt_message(password, key)
 
             passwords = load_passwords()
-            passwords[service] = encrypted_password.decode()
+            passwords[service] = encrypted_password.decode()  # Store as a string in JSON
             save_passwords(passwords)
             print(f"{Fore.GREEN}✅ Password for {service} has been locked away safely! 🔒")
             time.sleep(2)
@@ -140,7 +138,7 @@ def main():
                     print(f"{Fore.YELLOW} - {service}")
             else:
                 print(f"{Fore.RED}🚨 No services saved yet.")
-            print()
+            print()  # Adding space for better readability
             time.sleep(1)
 
         elif choice == "4":
@@ -151,22 +149,6 @@ def main():
             time.sleep(1)
 
         elif choice == "5":
-            clear_screen()
-            print_banner()
-            search_term = input(f"{Fore.CYAN}🔍 Enter the service name or keyword to search: {Fore.YELLOW}")
-            passwords = load_passwords()
-            found_services = [service for service in passwords if search_term.lower() in service.lower()]
-
-            if found_services:
-                print(f"{Fore.GREEN}🔍 Services found:")
-                for service in found_services:
-                    print(f"{Fore.YELLOW} - {service}")
-            else:
-                print(f"{Fore.RED}🚨 No services matched the search term.")
-            print()
-            time.sleep(1)
-
-        elif choice == "6":
             clear_screen()
             print(f"{Fore.GREEN}👋 Exiting. Stay safe!")
             break
@@ -179,3 +161,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    # Ensure __pycache__ is removed at the end of the script
+    remove_pycache()

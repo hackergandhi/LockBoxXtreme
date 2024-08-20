@@ -1,62 +1,26 @@
 import sys
-import os
 import re
+import string
+import random
 from cryptography.fernet import Fernet
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.backends import default_backend
-import base64
-from getpass import getpass
 
 sys.dont_write_bytecode = True
 
-def generate_key(password: str) -> bytes:
-    """
-    Generates an encryption key based on a password using PBKDF2HMAC.
-    """
-    salt = os.urandom(16)
-    kdf = PBKDF2HMAC(
-        algorithm=hashes.SHA256(),
-        length=32,
-        salt=salt,
-        iterations=100000,
-        backend=default_backend()
-    )
-    key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
-    return key, salt
+def generate_key():
+    return Fernet.generate_key()
 
-def load_key(password: str, salt: bytes) -> bytes:
-    """
-    Loads the encryption key using the provided password and salt.
-    """
-    kdf = PBKDF2HMAC(
-        algorithm=hashes.SHA256(),
-        length=32,
-        salt=salt,
-        iterations=100000,
-        backend=default_backend()
-    )
-    key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
-    return key
+def load_key():
+    return open("secret.key", "rb").read()
 
 def encrypt_message(message: str, key: bytes) -> bytes:
-    """
-    Encrypts a message using the provided key.
-    """
     f = Fernet(key)
     return f.encrypt(message.encode())
 
 def decrypt_message(encrypted_message: bytes, key: bytes) -> str:
-    """
-    Decrypts an encrypted message using the provided key.
-    """
     f = Fernet(key)
     return f.decrypt(encrypted_message).decode()
 
 def validate_password(password: str) -> bool:
-    """
-    Validates the password to ensure it meets enhanced security criteria.
-    """
     if len(password) < 8:
         print("Password should be at least 8 characters long.")
         return False
@@ -72,7 +36,18 @@ def validate_password(password: str) -> bool:
     if not re.search("[!@#$%^&*(),.?\":{}|<>]", password):
         print("Password should contain at least one special character.")
         return False
-    if re.search(r'(.)\1\1', password):
-        print("Password should not contain sequences of three or more repeating characters.")
-        return False
     return True
+
+def generate_random_password(length: int = 12, use_special_chars: bool = True) -> str:
+    """
+    Generates a random password with the given length.
+    """
+    chars = string.ascii_letters + string.digits
+    if use_special_chars:
+        chars += string.punctuation
+
+    password = ''.join(random.choice(chars) for _ in range(length))
+    if validate_password(password):
+        return password
+    else:
+        return generate_random_password(length, use_special_chars)

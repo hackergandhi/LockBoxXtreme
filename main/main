@@ -5,13 +5,33 @@ import os
 import time
 import colorama
 from colorama import Fore, Style
-from encryptor import generate_key, load_key, encrypt_message, decrypt_message, validate_password
-from storage import save_passwords, load_passwords, delete_service
+import importlib.util
 from getpass import getpass
 import json
 import shutil
 
 sys.dont_write_bytecode = True
+
+# Function to dynamically load modules without .py extension
+def load_module(module_name, module_path):
+    spec = importlib.util.spec_from_file_location(module_name, module_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+# Load the encryptor and storage modules
+encryptor = load_module("encryptor", "encryptor")
+storage = load_module("storage", "storage")
+
+# Assign functions from the loaded modules
+generate_key = encryptor.generate_key
+load_key = encryptor.load_key
+encrypt_message = encryptor.encrypt_message
+decrypt_message = encryptor.decrypt_message
+validate_password = encryptor.validate_password
+save_passwords = storage.save_passwords
+load_passwords = storage.load_passwords
+delete_service = storage.delete_service
 
 # Prevent the creation of __pycache__
 def remove_pycache():

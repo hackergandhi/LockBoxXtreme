@@ -12,16 +12,22 @@ import shutil
 
 sys.dont_write_bytecode = True
 
-# Function to dynamically load modules without .py extension
+# Function to dynamically load modules with correct extensions
 def load_module(module_name, module_path):
+    if not os.path.exists(module_path):
+        raise FileNotFoundError(f"Module '{module_name}' not found at '{module_path}'")
+    
     spec = importlib.util.spec_from_file_location(module_name, module_path)
+    if spec is None:
+        raise ImportError(f"Cannot load the spec for module '{module_name}' from '{module_path}'")
+    
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
 
-# Load the encryptor and storage modules
-encryptor = load_module("encryptor", "encryptor")
-storage = load_module("storage", "storage")
+# Ensure the paths are correct; adjust as needed
+encryptor = load_module("encryptor", "./encryptor.py")
+storage = load_module("storage", "./storage.py")
 
 # Assign functions from the loaded modules
 generate_key = encryptor.generate_key
@@ -43,9 +49,6 @@ remove_pycache()
 colorama.init(autoreset=True)
 
 def clear_screen():
-    """
-    Clears the terminal screen based on the operating system.
-    """
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def print_banner():
@@ -81,9 +84,6 @@ python main.py -h         Show help message.
     print(help_text)
 
 def main():
-    """
-    Main function to interact with the user and manage passwords.
-    """
     if len(sys.argv) > 1 and sys.argv[1] in ['-h', '--help']:
         print_help()
         return
@@ -130,7 +130,7 @@ def main():
             encrypted_password = encrypt_message(password, key)
 
             passwords = load_passwords()
-            passwords[service] = encrypted_password.decode()  # Store as a string in JSON
+            passwords[service] = encrypted_password.decode()
             save_passwords(passwords)
             print(f"{Fore.GREEN}✅ Password for {service} has been locked away safely! 🔒")
             time.sleep(2)
@@ -160,7 +160,7 @@ def main():
                     print(f"{Fore.YELLOW} - {service}")
             else:
                 print(f"{Fore.RED}🚨 No services saved yet.")
-            print()  # Adding space for better readability
+            print()
             time.sleep(1)
 
         elif choice == "4":
@@ -183,6 +183,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-    # Ensure __pycache__ is removed at the end of the script
     remove_pycache()

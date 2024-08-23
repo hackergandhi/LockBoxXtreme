@@ -14,6 +14,15 @@ sys.dont_write_bytecode = True
 
 # Load module without extension
 def load_module(module_name, module_path):
+    # Check if the path without extension exists
+    if not os.path.exists(module_path):
+        # Attempt to add the .py extension and check again
+        module_path_with_extension = module_path + '.py'
+        if os.path.exists(module_path_with_extension):
+            module_path = module_path_with_extension
+        else:
+            raise FileNotFoundError(f"Module '{module_name}' not found at '{module_path}'")
+
     spec = importlib.util.spec_from_file_location(module_name, module_path)
     if spec is None:
         raise FileNotFoundError(f"Module '{module_name}' not found at '{module_path}'")
@@ -109,14 +118,14 @@ def main():
     while True:
         clear_screen()
         print_banner()
-        
+
         print(f"{Fore.MAGENTA}💾 Choose an option:")
         print(f"{Fore.YELLOW}1) Store Password {Fore.MAGENTA}(Keep it safe, bro!)")
         print(f"{Fore.YELLOW}2) Retrieve Password {Fore.MAGENTA}(Don't worry, I got you!)")
         print(f"{Fore.YELLOW}3) View All Services {Fore.MAGENTA}(Check what you have stored!)")
         print(f"{Fore.YELLOW}4) Delete a Service {Fore.MAGENTA}(Remove a stored password!)")
         print(f"{Fore.YELLOW}5) Exit {Fore.MAGENTA}(Bye for now!)")
-        
+
         choice = input(f"{Fore.GREEN}👉 {Fore.CYAN}Enter your choice: {Style.RESET_ALL}")
 
         if choice == "1":

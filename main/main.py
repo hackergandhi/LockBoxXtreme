@@ -40,6 +40,7 @@ load_key = encryptor.load_key
 encrypt_message = encryptor.encrypt_message
 decrypt_message = encryptor.decrypt_message
 validate_password = encryptor.validate_password
+update_encryption_key = encryptor.update_encryption_key
 
 save_passwords = storage.save_passwords
 load_passwords = storage.load_passwords
@@ -84,7 +85,8 @@ Options:
 2) Retrieve Password      Retrieve a stored password.
 3) View All Services      View all services with stored passwords.
 4) Delete a Service       Delete a stored password for a specific service.
-5) Exit                   Exit the application.
+5) Update Master Password Update your master password.
+6) Exit                   Exit the application.
 
 {Fore.YELLOW}Example:
 python main            Run the interactive menu.
@@ -92,39 +94,95 @@ python main -h         Show help message.
 """
     print(help_text)
 
-def main():
+def update_master_password():
     """
-    Main function to interact with the user and manage passwords.
+    Allows the user to update the master password.
     """
-    if len(sys.argv) > 1 and sys.argv[1] in ['-h', '--help']:
-        print_help()
+    passwords = load_passwords()
+
+    if not passwords:
+        print(f"{Fore.RED}🚨 No passwords stored. Nothing to update!")
         return
 
-    salt = None
-    key = None
-
+    old_password = getpass(f"{Fore.CYAN}🔑 Enter your current master password: {Fore.YELLOW}")
     try:
-        with open("secret.salt", "rb") as salt_file:
-            salt = salt_file.read()
-    except FileNotFoundError:
-        print(f"{Fore.RED}🚨 Salt file not found. A new one will be created.")
-        salt = os.urandom(16)
-        with open("secret.salt", "wb") as salt_file:
-            salt_file.write(salt)
+        old_key = load_key(old_password, salt)
+        # Attempt to decrypt one of the passwords to ensure the old key is correct
+        decrypt_message(next(iter(passwords.values())).encode(), old_key)
+    except Exception:
+        print(f"{Fore.RED}❌ Incorrect master password. Update failed.")
+        return
 
-    password = getpass(f"{Fore.CYAN}🔑 Enter your master password: {Fore.YELLOW}")
-    key = load_key(password, salt)
+    new_password = getpass(f"{Fore.CYAN}🔑 Enter your new master password: {Fore.YELLOW}")
+    if not validate_password(new_password):
+        print(f"{Fore.RED}❌ New password did not meet the requirements. Update failed.")
+        return
+
+    confirm_password = getpass(f"{Fore.CYAN}🔑 Confirm your new master password: {Fore.YELLOW}")
+    if new_password != confirm_password:
+        print(f"{Fore.RED}❌ Passwords do not match. Update failed.")
+        return
+
+    new_key, new_salt = generate_key(new_password)
+
+    updated_passwords = update_encryption_key(old_key, new_key, passwords)
+
+    save_passwords(updated_passwords)
+
+    with open("secret.salt", "wb") as salt_file:
+        salt_file.write(new_salt)
+
+    print(f"{Fore.GREEN}✅ Master password updated successfully!")
+
+def initial_master_password_setup():
+    """
+    Sets up the master password initially with validation.
+    """
+    while True:
+        new_password = getpass(f"{Fore.CYAN}🔑 Create your master password: {Fore.YELLOW}")
+        if not validate_password(new_password):
+            print(f"{Fore.RED}❌ Password did not meet the requirements. Please try again.")
+            continue
+
+        confirm_password = getpass(f"{Fore.CYAN}🔑 Confirm your master password: {Fore.YELLOW}")
+        if new_password != confirm_password:
+            print(f"{Fore.RED}❌ Passwords do not match. Please try again.")
+        else:
+            break
+
+    new_key, new_salt = generate_key(new_password)
+    with open("secret.salt", "wb") as salt_file:
+        salt_file.write(new_salt)
+
+    print(f"{Fore.GREEN}✅ Master password setup complete!")
+
+def main():
+    """
+    Main function to display the menu and handle user choices.
+    """
+    clear_screen()
+    print_banner()
+
+    if not os.path.exists("secret.salt"):
+        initial_master_password_setup()
+
+    with open("secret.salt", "rb") as salt_file:
+        global salt
+        salt = salt_file.read()
+
+    master_password = getpass(f"{Fore.CYAN}🔑 Enter your master password to unlock: {Fore.YELLOW}")
+    key = load_key(master_password, salt)
 
     while True:
         clear_screen()
         print_banner()
-
-        print(f"{Fore.MAGENTA}💾 Choose an option:")
+        print(f"{Fore.YELLOW}💾 Choose an option:")
         print(f"{Fore.YELLOW}1) Store Password {Fore.MAGENTA}(Keep it safe, bro!)")
         print(f"{Fore.YELLOW}2) Retrieve Password {Fore.MAGENTA}(Don't worry, I got you!)")
         print(f"{Fore.YELLOW}3) View All Services {Fore.MAGENTA}(Check what you have stored!)")
         print(f"{Fore.YELLOW}4) Delete a Service {Fore.MAGENTA}(Remove a stored password!)")
-        print(f"{Fore.YELLOW}5) Exit {Fore.MAGENTA}(Bye for now!)")
+        print(f"{Fore.YELLOW}5) Update Master Password {Fore.MAGENTA}(Secure your vault!)")
+        print(f"{Fore.YELLOW}6) Exit {Fore.MAGENTA}(Bye for now!)")
 
         choice = input(f"{Fore.GREEN}👉 {Fore.CYAN}Enter your choice: {Style.RESET_ALL}")
 
@@ -183,6 +241,12 @@ def main():
             time.sleep(1)
 
         elif choice == "5":
+            clear_screen()
+            print_banner()
+            update_master_password()
+            time.sleep(2)
+
+        elif choice == "6":
             clear_screen()
             print(f"{Fore.GREEN}👋 Exiting. Stay safe!")
             break

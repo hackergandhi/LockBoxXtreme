@@ -8,7 +8,6 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 import base64
-from getpass import getpass
 
 sys.dont_write_bytecode = True
 
@@ -78,3 +77,13 @@ def validate_password(password: str) -> bool:
         print("Password should not contain sequences of three or more repeating characters.")
         return False
     return True
+
+def update_encryption_key(old_key: bytes, new_key: bytes, passwords: dict) -> dict:
+    """
+    Re-encrypts all passwords with the new key.
+    """
+    updated_passwords = {}
+    for service, encrypted_password in passwords.items():
+        decrypted_password = decrypt_message(encrypted_password.encode(), old_key)
+        updated_passwords[service] = encrypt_message(decrypted_password, new_key).decode()
+    return updated_passwords

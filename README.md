@@ -88,7 +88,7 @@ This project is licensed under the MIT License. See the [LICENSE](https://github
 ### Contact
 For any queries or feedback, you can reach out to the project maintainer:
 
-- **Name:** anonymous
+- **Name:** Anonymous
 - **Email:** loverslandgandhi@gmail.com
 
 Thank you for using LockBoxXtreme. We hope this tool helps you manage your passwords securely and efficiently!

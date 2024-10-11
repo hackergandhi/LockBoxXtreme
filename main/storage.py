@@ -58,7 +58,7 @@ def add_password(service: str, password: str, master_password: str):
         "password": encoded_password,
         "salt": encoded_salt,
         "created_at": str(datetime.now()),
-        "expires_at": str(datetime.now() + timedelta(days=90))  # Optional 90-day expiration
+        "expires_at": str(datetime.now() + timedelta(days=90))
     }
     save_passwords(passwords)
     print(f"✅ {service} password saved successfully!")

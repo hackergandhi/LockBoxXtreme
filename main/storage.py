@@ -1,52 +1,24 @@
-#!/usr/bin/env python3
-
 import json
-import os
 import base64
+import os
 from datetime import datetime, timedelta
-from encryptor import generate_key, encrypt_message, decrypt_message
+from encryptor import encrypt_message, decrypt_message, generate_key, generate_2fa_code
 
-def save_passwords(passwords: dict):
-    """
-    Saves passwords to a JSON file, backing up the previous version before saving.
-    """
-    backup_filename = 'passwords_backup.json'
-    if os.path.exists('passwords.json'):
-        os.rename('passwords.json', backup_filename)
-
-    try:
-        with open('passwords.json', 'w') as f:
-            json.dump(passwords, f, indent=4)
-        if os.path.exists(backup_filename):
-            os.remove(backup_filename)
-    except Exception as e:
-        print(f"🚨 Error saving passwords: {e}")
-        if os.path.exists(backup_filename):
-            os.rename(backup_filename, 'passwords.json')
+PASSWORD_FILE = "passwords.json"
 
 def load_passwords() -> dict:
-    """
-    Loads the encrypted passwords from the JSON file.
-    """
-    try:
-        with open('passwords.json', 'r') as f:
-            passwords = json.load(f)
-            if not isinstance(passwords, dict):
-                raise ValueError("Corrupted passwords file format.")
-            return passwords
-    except FileNotFoundError:
-        print("🚨 Error: passwords.json file not found! Starting fresh.")
-        return {}
-    except (json.JSONDecodeError, ValueError):
-        print("🚨 Error: Corrupted or empty passwords file. Restoring from backup.")
-        if os.path.exists('passwords_backup.json'):
-            os.rename('passwords_backup.json', 'passwords.json')
-            return load_passwords()
-        return {}
+    if os.path.exists(PASSWORD_FILE):
+        with open(PASSWORD_FILE, 'r') as file:
+            return json.load(file)
+    return {}
 
-def add_password(service: str, password: str, master_password: str):
+def save_passwords(passwords: dict):
+    with open(PASSWORD_FILE, 'w') as file:
+        json.dump(passwords, file, indent=4)
+
+def store_password(service: str, password: str, master_password: str):
     """
-    Adds a new password for a service, encrypting it with the master password.
+    Stores a new password for a service, encrypting it with the master password.
     """
     passwords = load_passwords()
     salt = os.urandom(16)
@@ -80,6 +52,8 @@ def retrieve_password(service: str, master_password: str):
             if expires_at < datetime.now():
                 print(f"⚠️ The password for {service} has expired. Consider updating it.")
             print(f"🔓 {service} password: {password}")
+            # New feature: 2FA Code generation
+            print(f"🔒 2FA Code: {generate_2fa_code()}")
         except Exception as e:
             print(f"🚨 Error decrypting password: {e}")
     else:
@@ -96,3 +70,30 @@ def delete_service(service: str):
         print(f"✅ {service} has been removed successfully.")
     else:
         print(f"🚨 No such service found.")
+
+def backup_passwords(master_password: str):
+    """
+    Creates a secure encrypted backup of the passwords file.
+    """
+    passwords = load_passwords()
+    salt = os.urandom(16)
+    key = generate_key(master_password, salt)
+    backup_data = encrypt_message(json.dumps(passwords), key)
+    backup_filename = "backup.enc"
+    with open(backup_filename, 'wb') as file:
+        file.write(base64.b64encode(salt + backup_data))
+    print(f"✅ Backup created as {backup_filename}. Keep it safe.")
+
+def restore_passwords(backup_filename: str, master_password: str):
+    """
+    Restores passwords from an encrypted backup.
+    """
+    with open(backup_filename, 'rb') as file:
+        data = base64.b64decode(file.read())
+        salt = data[:16]
+        encrypted_data = data[16:]
+        key = generate_key(master_password, salt)
+        decrypted_data = decrypt_message(encrypted_data, key)
+        passwords = json.loads(decrypted_data)
+        save_passwords(passwords)
+        print(f"✅ Passwords restored from {backup_filename}.")

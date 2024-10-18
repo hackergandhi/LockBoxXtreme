@@ -7,6 +7,8 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 import base64
+import random
+import string
 
 def generate_key(password: str, salt: bytes) -> bytes:
     """
@@ -61,10 +63,23 @@ def password_strength(password: str) -> str:
     """
     Provides feedback on the strength of the password.
     """
-    score = sum(bool(re.search(p, password)) for p in [r"[a-z]", r"[A-Z]", r"[0-9]", r"[@#$%^&+=]"])
-    if score == 4:
-        return "🔒 Strong"
-    elif score == 3:
-        return "🔐 Medium"
+    length = len(password)
+    if length >= 16 and re.search("[a-z]", password) and re.search("[A-Z]", password) and re.search("[0-9]", password) and re.search("[@#$%^&+=]", password):
+        return "Strong"
+    elif length >= 12:
+        return "Moderate"
     else:
-        return "🛑 Weak"
+        return "Weak"
+
+def generate_random_password(length=12) -> str:
+    """
+    Generates a strong random password with the specified length.
+    """
+    characters = string.ascii_letters + string.digits + '@#$%^&+='
+    return ''.join(random.choice(characters) for _ in range(length))
+
+def generate_2fa_code() -> str:
+    """
+    Generates a temporary 6-digit 2FA code.
+    """
+    return str(random.randint(100000, 999999))

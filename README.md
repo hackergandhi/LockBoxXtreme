@@ -27,7 +27,7 @@
    Clone the repository to your local machine:
 
    ```bash
-   git clone https://github.com/gandhibhai/LockBoxXtreme.git
+   git clone https://github.com/GumnaamSaaya/LockBoxXtreme.git
    cd LockBoxXtreme
    ```
 

@@ -4,14 +4,15 @@
 
 ## Overview
 
-**LockBoxXtreme** is a fun and secure command-line tool for storing and retrieving passwords. Designed with both functionality and flair, LockBoxXtreme encrypts your passwords to keep them safe from prying eyes, while also providing a colorful and engaging interface to make password management a bit more enjoyable.
+**LockBoxXtreme** is a robust and engaging tool for managing passwords, now entirely based on a web interface. With strong encryption and a user-friendly design, it makes password management both secure and accessible.
 
 ## Features
 
-- 🔒 **Secure Storage**: Encrypts passwords using the robust `cryptography` library.
-- 🔍 **Easy Retrieval**: Retrieve passwords by simply entering the service name.
-- 🎨 **Engaging Interface**: A playful, colorful command-line experience.
-- 🕹️ **Interactive Prompts**: Unique and entertaining prompts to brighten up password management.
+- 🔑 **Master Password Setup:** Secure your data with a master password.
+- 🌐 **Web Interface**: Access and manage passwords using your browser.
+- 📂 **Database Storage:** Passwords are securely stored in a SQLite database.
+- 🔄 **Password Management:** Store, retrieve, update, and delete passwords with ease.
+- ⚡ **Password Generation:** Instantly generate strong passwords through the web app.
 
 ## Installation
 
@@ -36,42 +37,61 @@
 Install the required Python packages:
 
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ### Run the Application
 
-- Start the application:
+- Run the Application:
 
 ```bash
-python3 main.py
+python3 app.py
+```
+
+- Access the Web Interface Open your browser and go to:
+
+```arduino
+  http://127.0.0.1:5000
 ```
 
 ### Usage
 
 **Storing a Password**
 
-- The password will be encrypted and stored.
-  
-  (Encryption):
+1) Navigate to the "Store Password" page.
+2) Provide the service name and the password you want to store.
+3) The password is encrypted before storage using the Fernet method:
 
 ```python
-encrypted_password = encrypt_message(password, key)
-passwords[service] = encrypted_password.decode()
-save_passwords(passwords)
+encrypted_password = fernet.encrypt(password.encode()).decode()
 ```
+4) The encrypted password is stored securely in the SQLite database.
 
 ### Retrieving a Password
 
-- If the service exists, the decrypted password will be displayed.
-
- (Decryption):
+1) Navigate to the "Retrieve Password" page.
+2) Search for the service name.
+3) If the service exists, the encrypted password is retrieved and decrypted:
 
 ```python
-encrypted_password = passwords.get(service)
-if encrypted_password:
-    decrypted_password = decrypt_message(encrypted_password.encode(), key)
+decrypted_password = fernet.decrypt(encrypted_password.encode()).decode()
 ```
+4) The decrypted password is displayed on the web interface.
+
+**Updating the Master Password**
+
+1) Navigate to the "Update Master Password" page.
+2) Provide the current master password and the new password.
+3) The new password is hashed using bcrypt and securely stored in the database:
+
+```python
+hashed_pw = hashpw(new_password.encode(), gensalt())
+```
+**Password Deletion**
+
+1) Navigate to the "Delete Password" page.
+2) Provide the service name and master password.
+3) The corresponding entry is removed from the database if authentication succeeds.
 
 ### Contributing
 We welcome contributions to LockBoxXtreme! If you have suggestions, bug reports, or improvements, please submit an issue or pull request on our [GitHub](https://github.com/gandhibhai/LockBoxXtreme/issues/new) repository.
@@ -82,7 +102,8 @@ This project is licensed under the MIT License. See the [LICENSE](https://github
 ### Acknowledgments
 
 - **Cryptography Library:** Thanks to the creators of the cryptography library for their secure encryption tools.
-- **Colorama Library:** Appreciation for the colorama library which helps in making the command-line interface colorful and engaging.
+- **Flask Framework:** For enabling a clean and intuitive web-based interface.
+- **SQLite:** For efficient and lightweight database storage.
 - **Contributors:** A big thank you to all contributors who help enhance this project.
 
 ### Contact

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+            text-align: center;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: #4a90e2;
+            border-radius: 2px;
+        }
+
+        ul {
+            list-style: none;
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        li {
+            width: 100%;
+        }
+
+        li a {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            background-color: white;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        /* Add icons for each menu item */
+        li a::before {
+            margin-right: 12px;
+            font-size: 20px;
+        }
+
+        li:nth-child(1) a::before { content: '💾'; }  /* Store */
+        li:nth-child(2) a::before { content: '🔍'; }  /* Retrieve */
+        li:nth-child(3) a::before { content: '🎲'; }  /* Generate */
+        li:nth-child(4) a::before { content: '🔄'; }  /* Update */
+        li:nth-child(5) a::before { content: '🗑️'; }  /* Delete */
+
+        li a:hover {
+            border-color: #4a90e2;
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .logout-btn {
+            display: inline-block;
+            width: 100%;
+            padding: 14px 20px;
+            background-color: #dc3545;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .logout-btn:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+
+        /* Add a subtle hover effect for interactive elements */
+        .logout-btn:active,
+        li a:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+                margin-bottom: 25px;
+            }
+
+            li a {
+                padding: 12px 16px;
+            }
+
+            .logout-btn {
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the Dashboard</h1>
+        <ul>
+            <li><a href="{{ url_for('store_password') }}">Store a Password</a></li>
+            <li><a href="{{ url_for('retrieve_password') }}">Retrieve Password</a></li>
+            <li><a href="{{ url_for('generate_password') }}">Generate a Strong Password</a></li>
+            <li><a href="{{ url_for('update_master_password') }}">Update Master Password</a></li>
+            <li><a href="{{ url_for('delete_password') }}">Delete Password</a></li>
+        </ul>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+    </div>
+</body>
+</html>
